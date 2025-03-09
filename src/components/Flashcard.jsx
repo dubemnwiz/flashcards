@@ -4,14 +4,41 @@ import '../styles/Flashcard.css';
 function Flashcard({ flashcards }) {
   const [index, setIndex] = useState(0);
   const [isFlipped, setFlipped] = useState(false);
+  const [guess, setGuess] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   const nextCard = () => {
-    setIndex((index + 1) % Object.keys(flashcards).length);
+    if (index == 9) {
+      setIndex(9)
+    } else {
+      setIndex(index + 1); //% Object.keys(flashcards).length);
+    }
     setFlipped(false);
+    setGuess("");
+    setFeedback("");
+  };
+
+  const prevCard = () => {
+    if (index == 0) {
+      setIndex(0)
+    } else {
+      setIndex(index - 1); //% Object.keys(flashcards).length);
+    }
+    setFlipped(false);
+    setGuess("");
+    setFeedback("");
   };
 
   const flipCard = () => {
     setFlipped(!isFlipped);
+  };
+
+  const handleGuessSubmit = () => {
+    if (guess.toLowerCase() === flashcards[index].answer.toLowerCase()) {
+      setFeedback("✅ Correct!");
+    } else {
+      setFeedback(`❌ Incorrect! The correct answer is: ${flashcards[index].answer}`);
+    }
   };
 
   return (
@@ -29,7 +56,22 @@ function Flashcard({ flashcards }) {
         </div>
       </div>
       <br />
-      <button onClick={nextCard}> Next Question </button>
+
+      {!isFlipped && (
+        <div className='guess'>
+          <input
+            type="text"
+            placeholder="Guess the artist"
+            value={guess}
+            onChange={(e) => setGuess(e.target.value)}
+          />
+          <button onClick={handleGuessSubmit}>Submit</button>
+          <p>{feedback}</p>
+        </div>
+      )}
+
+      <button onClick={prevCard}> Prev. </button>
+      <button onClick={nextCard}> Next </button>
     </>
   );
 }
